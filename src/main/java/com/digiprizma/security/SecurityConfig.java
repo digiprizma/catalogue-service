@@ -1,6 +1,7 @@
 package com.digiprizma.security;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -24,10 +25,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		// make stateless authetntif
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 		.and().authorizeRequests().antMatchers("/users/**","/logins/**");
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/categories/**").permitAll();
+		http.authorizeRequests().antMatchers(HttpMethod.GET,"/products/**").permitAll();
 		http.authorizeRequests().antMatchers("/categories/**").hasAuthority("ADMIN");
 		http.authorizeRequests().antMatchers("/products/**").hasAuthority("USER");
 		http.authorizeRequests().anyRequest().authenticated();
-		http.addFilterBefore(new JWTAuthorisationFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.addFilterBefore(new JWTAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 		// desactivate security usage
 		// super.configure(http);
 	}
